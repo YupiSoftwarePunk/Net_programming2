@@ -2,3 +2,14 @@ C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\ser
 C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\server.AssemblyInfoInputs.cache
 C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\server.AssemblyInfo.cs
 C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\server.csproj.CoreCompileInputs.cache
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\bin\Debug\net9.0\server.exe
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\bin\Debug\net9.0\server.deps.json
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\bin\Debug\net9.0\server.runtimeconfig.json
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\bin\Debug\net9.0\server.dll
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\bin\Debug\net9.0\server.pdb
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\server.sourcelink.json
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\server.dll
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\refint\server.dll
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\server.pdb
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\server.genruntimeconfig.cache
+C:\Users\Denis\Documents\projects C#\NetProgramming2\server\obj\Debug\net9.0\ref\server.dll

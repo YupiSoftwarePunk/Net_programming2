@@ -1,99 +1,96 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace server
 {
     internal class Program
     {
-        static void Main(string[] args)
+        public static readonly List<TcpClient> clients = new List<TcpClient>();
+        private static readonly object locker = new object();
+
+        static async Task Main(string[] args)
         {
-            TcpListener tcpListener = null;
+            TcpListener tcpListener = new TcpListener(IPAddress.Any, 8080);
+            tcpListener.Start();
 
-            try
+            Console.WriteLine("Сервер запущен и ожидает подключения...");
+
+            while (true)
             {
-                tcpListener = new TcpListener(IPAddress.Any, 8080);
-                tcpListener.Start();
-
-                Console.WriteLine("Сервер запущен и ожидает подключения...");
-
-                TcpClient tcpClient = tcpListener.AcceptTcpClient();
+                TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
                 Console.WriteLine("Клиент подключен");
 
-                NetworkStream netStream = tcpClient.GetStream();
+                lock (locker)
+                {
+                    clients.Add(tcpClient);
+                }
 
-                Thread receiveThread = new Thread(() => ReceiveMessages(netStream));
-
-                receiveThread.Start();
-
-                SendMessage(netStream);
-
-                receiveThread.Join();
-                netStream.Close();
-                tcpClient.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка на сервере: {ex.Message}");
-            }
-            finally
-            {
-                tcpListener?.Stop();
+                _ = ReceiveMessages(tcpClient);
             }
         }
 
 
-
-        static async Task ReceiveMessages(Stream netStream)
+        private static async Task ReceiveMessages(TcpClient client)
         {
+            NetworkStream stream = client.GetStream();
             byte[] buffer = new byte[1024];
 
             try
             {
                 while (true)
                 {
-                    int reader = netStream.Read(buffer, 0, buffer.Length);
-
+                    int reader = stream.Read(buffer, 0, buffer.Length);
                     if (reader == 0)
                     {
                         break;
                     }
 
-                    string message = Encoding.UTF8.GetString(buffer, 0, reader);
-                    Console.WriteLine($"[Сервер] Сообщение от клиента получено: {message}");
+                    string message = Encoding.UTF8.GetString(buffer);
+                    Console.WriteLine("Сообщение от клиента: " + message);
+                    await SendMessageAsync(client, message);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"!! Ошибка при приеме сообщения (сервер): {ex.Message}");
+                Console.WriteLine("!! Возникла ошибка при обработке клиента: " + ex.Message);
+            }
+            finally
+            {
+                lock (locker)
+                {
+                    clients.Remove(client);
+                }
+                client.Close();
             }
         }
 
 
-        static async Task SendMessage(Stream netStream)
+        private static async Task SendMessageAsync(TcpClient sender, string message)
         {
-            try
+            byte[] buffer = new byte[1024];
+
+            lock (locker)
             {
-                while (true)
+                foreach (var clientt in clients)
                 {
-                    string message = Console.ReadLine();
-
-                    if (string.IsNullOrEmpty(message))
-                        continue;
-
-                    byte[] data = Encoding.UTF8.GetBytes(message);
-                    netStream.Write(data, 0, data.Length);
-
-                    if (message.ToLower() == "exit")
+                    if (clientt != sender)
                     {
-                        break;
+                        try
+                        {
+                            NetworkStream stream = clientt.GetStream();
+                            stream.WriteAsync(buffer, 0, buffer.Length);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Ошибка при отправке сообщения клиенту: {ex.Message}");
+                        }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"!! Ошибка при отправке сообщения (сервер): {ex.Message}");
-            }
+
         }
     }
 }
