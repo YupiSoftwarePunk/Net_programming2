@@ -18,7 +18,8 @@
                    Margin="10" Grid.Row="0"/>
 
         <ListBox x:Name="MessagesList" 
-                 Grid.Row="1" Margin="10"/>
+                 Grid.Row="1" Margin="10"
+                 BorderBrush="CornflowerBlue" BorderThickness="2"/>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
             <TextBox x:Name="MessageInput" Width="665" Margin="0,0,10,0" 

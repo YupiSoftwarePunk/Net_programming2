@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
@@ -20,15 +21,18 @@ namespace server
 
             while (true)
             {
+                int i = 1;
                 TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
-                Console.WriteLine("Клиент подключен");
-
+                
                 lock (locker)
                 {
                     clients.Add(tcpClient);
+                    Console.WriteLine($"Клиент {i} подключен.");
+                    i++;
                 }
 
                 _ = ReceiveMessages(tcpClient);
+                
             }
         }
 
@@ -42,13 +46,13 @@ namespace server
             {
                 while (true)
                 {
-                    int reader = stream.Read(buffer, 0, buffer.Length);
+                    int reader = await stream.ReadAsync(buffer, 0, buffer.Length);
                     if (reader == 0)
                     {
                         break;
                     }
 
-                    string message = Encoding.UTF8.GetString(buffer);
+                    string message = Encoding.UTF8.GetString(buffer, 0, reader);
                     Console.WriteLine("Сообщение от клиента: " + message);
                     await SendMessageAsync(client, message);
                 }
@@ -70,7 +74,7 @@ namespace server
 
         private static async Task SendMessageAsync(TcpClient sender, string message)
         {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = Encoding.UTF8.GetBytes(message);
 
             lock (locker)
             {

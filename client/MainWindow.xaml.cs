@@ -36,8 +36,11 @@ namespace client
             byte[] data = Encoding.UTF8.GetBytes(message);
             await stream.WriteAsync(data, 0, data.Length);
 
-            MessagesList.Items.Add($"Мое сообщение: {message}");
-            MessageInput.Clear();
+            Dispatcher.Invoke(() =>
+            {
+                MessagesList.Items.Add($"Мое сообщение: {message}");
+                MessageInput.Clear();
+            });
 
             if (message.ToLower() == "exit")
             {
@@ -54,15 +57,21 @@ namespace client
                 await client.ConnectAsync("192.168.31.146", 8080);
 
                 stream = client.GetStream();
-                MessagesList.Items.Add("Подключено к серверу.");
-                MessageInput.Clear();
+                Dispatcher.Invoke(() =>
+                {
+                    MessagesList.Items.Add("Подключено к серверу.");
+                    MessageInput.Clear();
+                });
 
                 cts = new CancellationToken();
                 _ = Task.Run(() => ReceiveMessage(cts));
             }
             catch (Exception ex)
             {
-                MessagesList.Items.Add($"Ошибка подключения: {ex.Message}");
+                Dispatcher.Invoke(() =>
+                {
+                    MessagesList.Items.Add($"Ошибка подключения: {ex.Message}");
+                });
             }
         }
 
@@ -80,12 +89,19 @@ namespace client
                         break;
                     }
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    MessagesList.Items.Add($"[Сервер]: {message}");
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        MessagesList.Items.Add($"[Сервер]: {message}");
+                    });
                 }
             }
             catch (Exception ex)
             {
-                MessagesList.Items.Add($"Ошибка при получении сообщения: {ex.Message}");
+                Dispatcher.Invoke(() =>
+                {
+                    MessagesList.Items.Add($"Ошибка при получении сообщения: {ex.Message}");
+                });
             }
         }
     }
