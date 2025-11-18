@@ -1,0 +1,32 @@
+﻿<Window x:Class="client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:client"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Чат с сервером" 
+                   FontSize="16" FontWeight="Bold" 
+                   Margin="10" Grid.Row="0"/>
+
+        <ListBox x:Name="MessagesList" 
+                 Grid.Row="1" Margin="10"/>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
+            <TextBox x:Name="MessageInput" Width="665" Margin="0,0,10,0" 
+                     BorderBrush="CornflowerBlue" BorderThickness="2"/>
+            <Button Content="Отправить" Width="100" 
+                    Click="SendMessageClick" Background="CornflowerBlue"
+                    IsDefault="True"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>
